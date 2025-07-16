@@ -73,8 +73,8 @@ used_ram=$(echo "$highest_ram_amount / 1024 / 1024" | bc )
 filename=$(uname -n).shame
 
 # Printout the results
-echo "Highest RAM usage on $(uname -n):" > $filename
+echo "Highest RAM usage on $(uname -n) as of $(date):" > $filename
 echo "$highest_ram_user, $used_ram / $tot_ram_gb GB" >> $filename
 
-echo "Highest CPU usage on $(uname -n):" >> $filename
+echo "Highest CPU usage on $(uname -n) as of $(date):" >> $filename
 echo "$highest_cpu_user, $used_cpu / $num_cpus CPUs" >> $filename
