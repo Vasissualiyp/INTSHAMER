@@ -62,19 +62,57 @@ num_cpus=$(lscpu | grep "CPU(s):" | awk '{print $2}' | head -n 1)
 tot_ram_str=$(free -h | head -n 2 | tail -n 1 | awk '{print $2}')
 if [[ "$tot_ram_str" == *"Ti"* ]]; then
   tot_ram_tib=$(echo $tot_ram_str | sed "s/Ti//")
-  tot_ram_gib=$(echo "$tot_ram_tib * 1000" | bc)
+  tot_ram_gib=$(echo "$tot_ram_tib * 1024" | bc)
 else
   tot_ram_gib=$(echo $tot_ram_str | sed "s/Gi//")
 fi
-tot_ram_gb=$(echo "$tot_ram_gib * 1000 * 1000 * 1000 /1024 / 1024 / 1024" | bc)
+tot_ram_gb=$(echo "$tot_ram_gib" | bc)
 
 used_cpu=$(echo "$highest_cpu_amount / 100" | bc )
 used_ram=$(echo "$highest_ram_amount / 1024 / 1024" | bc )
-filename=$(uname -n).shame
+shame_file=$(uname -n).shame
+ram_user_file=$(uname -n).ram_user
+cpu_user_file=$(uname -n).cpu_user
+ram_monopoly_file=$(uname -n).ram_monopoly
+cpu_monopoly_file=$(uname -n).cpu_monopoly
 
-# Printout the results
-echo "Highest RAM usage on $(uname -n) as of $(date):" > $filename
-echo "$highest_ram_user, $used_ram / $tot_ram_gb GB" >> $filename
 
-echo "Highest CPU usage on $(uname -n) as of $(date):" >> $filename
-echo "$highest_cpu_user, $used_cpu / $num_cpus CPUs" >> $filename
+
+
+# Print out the results into the .shame file
+echo "Highest RAM usage on $(uname -n):" > $shame_file
+echo "$highest_ram_user, $used_ram / $tot_ram_gb GB" >> $shame_file
+
+echo "Highest CPU usage on $(uname -n):" >> $shame_file
+echo "$highest_cpu_user, $used_cpu / $num_cpus CPUs" >> $shame_file
+
+
+
+
+# Print the last time of RAM user change
+last_ram_user=$(cat $ram_user_file | awk '{print $1}')
+last_time_ram=$(cat $ram_user_file | awk '{print $2}')
+
+if [[ "$last_ram_user" == "$highest_ram_user" ]]; then
+  ram_user_time=$last_time_ram
+else
+  ram_user_time=$(date +%s)
+fi
+ram_monopoly_time=$(echo "$(date +%s) - $ram_user_time" | bc)
+echo "$highest_ram_user $ram_user_time" > $ram_user_file
+echo "$highest_ram_user $ram_monopoly_time" > $ram_monopoly_file
+
+
+
+# Print the last time of CPU user change
+last_cpu_user=$(cat $cpu_user_file | awk '{print $1}')
+last_time_cpu=$(cat $cpu_user_file | awk '{print $2}')
+
+if [[ "$last_cpu_user" == "$highest_cpu_user" ]]; then
+  cpu_user_time=$last_time_cpu
+else
+  cpu_user_time=$(date +%s)
+fi
+cpu_monopoly_time=$(echo "$(date +%s) - $cpu_user_time" | bc)
+echo "$highest_cpu_user $cpu_user_time" > $cpu_user_file
+echo "$highest_cpu_user $cpu_monopoly_time" > $cpu_monopoly_file

@@ -1,1 +1,6 @@
 *.shame
+*.txt
+*.ram_monopoly
+*.ram_user
+*.cpu_monopoly
+*.cpu_user
