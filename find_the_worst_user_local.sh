@@ -98,9 +98,17 @@ if [[ "$last_ram_user" == "$highest_ram_user" ]]; then
 else
   ram_user_time=$(date +%s)
 fi
-ram_monopoly_time=$(echo "$(date +%s) - $ram_user_time" | bc)
 echo "$highest_ram_user $ram_user_time" > $ram_user_file
-echo "$highest_ram_user $ram_monopoly_time" > $ram_monopoly_file
+
+
+# Check for RAM Monopoly conditions
+ram_monopoly_time=$(echo "$(date +%s) - $ram_user_time" | bc)
+monopoly_frac=$(echo "$used_ram / $tot_ram_gb" | bc -l)
+if [[ $monopoly_frac -gt 0.5 ]]; then
+    echo "$highest_ram_user $ram_monopoly_time" > $ram_monopoly_file
+else
+    echo "none 0" > $ram_monopoly_file
+fi
 
 
 
@@ -113,6 +121,15 @@ if [[ "$last_cpu_user" == "$highest_cpu_user" ]]; then
 else
   cpu_user_time=$(date +%s)
 fi
-cpu_monopoly_time=$(echo "$(date +%s) - $cpu_user_time" | bc)
 echo "$highest_cpu_user $cpu_user_time" > $cpu_user_file
-echo "$highest_cpu_user $cpu_monopoly_time" > $cpu_monopoly_file
+
+
+
+# Check for CPU Monopoly conditions
+cpu_monopoly_time=$(echo "$(date +%s) - $cpu_user_time" | bc)
+monopoly_frac=$(echo "$used_cpu / $tot_cpu_gb" | bc -l)
+if [[ $monopoly_frac -gt 0.5 ]]; then
+    echo "$highest_cpu_user $cpu_monopoly_time" > $cpu_monopoly_file
+else
+    echo "none 0" > $cpu_monopoly_file
+fi
