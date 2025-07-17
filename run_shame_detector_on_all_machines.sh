@@ -1,6 +1,6 @@
 #/bin/bash
 
-machine_names="mussel kingcrab homard lobster calamari shrimp prawn"
+machine_names="mussel kingcrab homard lobster calamari shrimp prawn ricky"
 timeout=20
 
 for machine in $machine_names; do

@@ -74,8 +74,9 @@ used_cpu=$(echo "$highest_cpu_amount / 100" | bc )
 used_ram=$(echo "$highest_ram_amount / 1024 / 1024" | bc )
 
 # Set up machine and file names
+ricky_machine_name="tpb12.sunnyvale"
 machine_name=$(uname -n)
-if [[ "$machine_name" == "tpb12.sunnyvale" ]]; then
+if [[ "$machine_name" == "$ricky_machine_name" ]]; then
   machine_name="ricky"
 fi
 shame_file=$machine_name.shame
