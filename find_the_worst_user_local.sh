@@ -1,5 +1,7 @@
 #!/bin/bash
 
+monopoly_threshold=0.2
+
 # Highest RAM
 highest_ram_user=$(ps -eo user,rss --no-headers | awk '
   { ram[$1] += $2 }
@@ -104,7 +106,7 @@ echo "$highest_ram_user $ram_user_time" > $ram_user_file
 # Check for RAM Monopoly conditions
 ram_monopoly_time=$(echo "$(date +%s) - $ram_user_time" | bc)
 monopoly_frac=$(echo "$used_ram / $tot_ram_gb" | bc -l)
-if [[ $monopoly_frac -gt 0.5 ]]; then
+if [ 1 -eq "$(echo "$monopoly_frac > $monopoly_threshold" | bc)" ]; then
     echo "$highest_ram_user $ram_monopoly_time" > $ram_monopoly_file
 else
     echo "none 0" > $ram_monopoly_file
@@ -127,8 +129,8 @@ echo "$highest_cpu_user $cpu_user_time" > $cpu_user_file
 
 # Check for CPU Monopoly conditions
 cpu_monopoly_time=$(echo "$(date +%s) - $cpu_user_time" | bc)
-monopoly_frac=$(echo "$used_cpu / $tot_cpu_gb" | bc -l)
-if [[ $monopoly_frac -gt 0.5 ]]; then
+monopoly_frac=$(echo "$used_cpu / $num_cpus" | bc -l)
+if [ 1 -eq "$(echo "$monopoly_frac > $monopoly_threshold" | bc)" ]; then
     echo "$highest_cpu_user $cpu_monopoly_time" > $cpu_monopoly_file
 else
     echo "none 0" > $cpu_monopoly_file
