@@ -72,20 +72,26 @@ tot_ram_gb=$(echo "$tot_ram_gib" | bc)
 
 used_cpu=$(echo "$highest_cpu_amount / 100" | bc )
 used_ram=$(echo "$highest_ram_amount / 1024 / 1024" | bc )
-shame_file=$(uname -n).shame
-ram_user_file=$(uname -n).ram_user
-cpu_user_file=$(uname -n).cpu_user
-ram_monopoly_file=$(uname -n).ram_monopoly
-cpu_monopoly_file=$(uname -n).cpu_monopoly
+
+# Set up machine and file names
+machine_name=$(uname -n)
+if [[ "$machine_name" == "tbp12.sunnyvale" ]]; then
+  machine_name="ricky"
+fi
+shame_file=$machine_name.shame
+ram_user_file=$machine_name.ram_user
+cpu_user_file=$machine_name.cpu_user
+ram_monopoly_file=$machine_name.ram_monopoly
+cpu_monopoly_file=$machine_name.cpu_monopoly
 
 
 
 
 # Print out the results into the .shame file
-echo "Highest RAM usage on $(uname -n):" > $shame_file
+echo "Highest RAM usage on $machine_name:" > $shame_file
 echo "$highest_ram_user, $used_ram / $tot_ram_gb GB" >> $shame_file
 
-echo "Highest CPU usage on $(uname -n):" >> $shame_file
+echo "Highest CPU usage on $machine_name:" >> $shame_file
 echo "$highest_cpu_user, $used_cpu / $num_cpus CPUs" >> $shame_file
 
 
